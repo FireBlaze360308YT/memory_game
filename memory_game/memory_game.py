@@ -60,28 +60,38 @@ def numbers_mode(difficulty :str) -> None:
 
 """in this function the actual game is executed"""
 def actual_game(difficulty :int, game_mode :str) -> None:
+    """Now we can use the functions created at the start of the script"""
     global sequence
     global new_record
     global points
     global clear
     global sleep_
+
+    """main loop"""
     while True:
         clear()
+
+        """With this if we handle the different gamemodes and difficultys selected """
         if game_mode == "numbers":
             sequence += rm.choice(NUMBERS[difficulty-1])
         else:
             sequence += rm.choice(LETTERS[difficulty-1])
 
+        """With this we print the characters"""
         for item in sequence:
             print(f"Current: {item}")
             sleep_(1)
             clear()
             sleep_(0.2)
 
+        """We check if the answer is correct"""
         if input("Write the sequence you have seen, if you get it wrong or type everything except the correct sequence you will lose and exit!: ").lower().strip() != sequence:
             clear()
+
+            """calculation of game time"""
             end = tm.perf_counter()
             game_time = end - start
+            
             print(f"Game Over, your score is: {points}")
             print(f"you played for {game_time} second")
             if points > current_record:
