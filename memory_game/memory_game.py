@@ -4,20 +4,25 @@ import random as rm
 import time as tm
 
 #Constants
+"""these two tuples contain the groups of values ​​from which the values ​​that will be remembered during the game will be selected"""
 LETTERS :tuple[str, str, str] = ("abcd", "abcdefg", "abcdefghijklmno")
 NUMBERS :tuple[str, str, str] = ("1234", "0123456", "0123456789")
 
+"""This ones are the variables that will be used during the program"""
 points, playtime, sequence, new_record, start = 0, 0, "", 0, tm.perf_counter()
 
+"""With this lines we import the record stored in the .txt file"""
 file = open("save_record.txt", "r")
 current_record = int(file.read())
 file.close()
 del file
 
 #Functions
+"""This two lambdas are only because of personal preference"""
 clear = lambda: os.system('cls')
 sleep_ = lambda i: tm.sleep(i)
 
+"""This function handles the updating of the .txt file"""
 def file_handling(num :int) -> None:
     file_1 = open("save_record.txt", "w")
     file_1.write(str(num))
@@ -25,6 +30,7 @@ def file_handling(num :int) -> None:
     del file_1
     return None
 
+"""This function contains the initial animation"""
 def opening_screen() -> None:
     clear()
     print("################################################################################################")
@@ -43,6 +49,7 @@ def opening_screen() -> None:
     sleep_(0.5)
     return None
 
+"""The next two functions specify the gamemode during the programme"""
 def letters_mode(difficulty :str) -> None:
     actual_game(difficulty=int(difficulty), game_mode="letters")
     return None
@@ -51,6 +58,7 @@ def numbers_mode(difficulty :str) -> None:
     actual_game(difficulty=int(difficulty), game_mode="numbers")
     return None
 
+"""in this function the actual game is executed"""
 def actual_game(difficulty :int, game_mode :str) -> None:
     global sequence
     global new_record
@@ -87,6 +95,7 @@ def actual_game(difficulty :int, game_mode :str) -> None:
         continue
     return None
 
+"""the main function contains the calls of all the other functions"""
 def main() -> None:
     opening_screen()
     while True:
@@ -113,5 +122,6 @@ def main() -> None:
         continue
 
 #Start of the program
+"""HELLO!"""
 if __name__ == "__main__":
     main()
