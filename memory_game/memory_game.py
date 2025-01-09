@@ -79,7 +79,7 @@ def actual_game(difficulty :int, game_mode :str) -> None:
 
         """With this we print the characters"""
         for item in sequence:
-            print(f"Current: {item}")
+            print(f"Current: {str(item)}")
             sleep_(1)
             clear()
             sleep_(0.2)
@@ -92,13 +92,13 @@ def actual_game(difficulty :int, game_mode :str) -> None:
             end = tm.perf_counter()
             game_time = end - start
             
-            print(f"Game Over, your score is: {points}")
-            print(f"you played for {game_time} second")
+            print(f"Game Over, your score is: {str(points)}")
+            print(f"you played for {str(game_time)} second")
             if points > current_record:
-                print(f"Your record has been increased to your new score: {points}")
+                print(f"Your record has been increased to your new score: {str(points)}")
                 file_handling(points)
             else:
-                print(f"Your score of {points} points is lower than or equal to your record of {current_record} points, so the record hasn't been changed!")
+                print(f"Your score of {str(points)} points is lower than or equal to your record of {str(current_record)} points, so the record hasn't been changed!")
             break
         print("Correct answer")
         points += 1
