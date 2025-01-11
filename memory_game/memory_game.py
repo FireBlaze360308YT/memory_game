@@ -132,6 +132,5 @@ def main() -> None:
         continue
 
 #Start of the program
-"""HELLO!"""
 if __name__ == "__main__":
     main()
