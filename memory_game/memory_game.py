@@ -1,136 +1,110 @@
-#Imports
 import os
 import random as rm
 import time as tm
 
-#Constants
-"""these two tuples contain the groups of values ​​from which the values ​​that will be remembered during the game will be selected"""
-LETTERS :tuple[str, str, str] = ("abcd", "abcdefg", "abcdefghijklmno")
-NUMBERS :tuple[str, str, str] = ("1234", "0123456", "0123456789")
+# Constants
+LETTERS = ("abcd", "abcdefg", "abcdefghijklmno")
+NUMBERS = ("1234", "0123456", "0123456789")
 
-"""This ones are the variables that will be used during the program"""
+# Variables used during the game
 points, playtime, sequence, new_record, start = 0, 0, "", 0, tm.perf_counter()
 
-"""With this lines we import the record stored in the .txt file"""
-file = open("save_record.txt", "r")
-current_record = int(file.read())
-file.close()
-del file
+# Load the current record from the file
+with open("save_record.txt", "r") as file:
+    current_record = int(file.read())
 
-#Functions
-"""This two lambdas are only because of personal preference"""
+# Functions
 clear = lambda: os.system('cls')
 sleep_ = lambda i: tm.sleep(i)
 
-"""This function handles the updating of the .txt file"""
-def file_handling(num :int) -> None:
-    file_1 = open("save_record.txt", "w")
-    file_1.write(str(num))
-    file_1.close()
-    del file_1
-    return None
+# Updates the record in the file
+def file_handling(num: int) -> None:
+    with open("save_record.txt", "w") as file:
+        file.write(str(num))
 
-"""This function contains the initial animation"""
+# Displays the opening screen animation
 def opening_screen() -> None:
     clear()
-    print("################################################################################################")
-    print("███╗   ███╗███████╗███╗   ███╗ ██████╗ ██████╗ ██╗   ██╗     ██████╗  █████╗ ███╗   ███╗███████╗")
-    sleep_(0.25)
-    print("████╗ ████║██╔════╝████╗ ████║██╔═══██╗██╔══██╗╚██╗ ██╔╝    ██╔════╝ ██╔══██╗████╗ ████║██╔════╝")
-    sleep_(0.25)
-    print("██╔████╔██║█████╗  ██╔████╔██║██║   ██║██████╔╝ ╚████╔╝     ██║  ███╗███████║██╔████╔██║█████╗  ")
-    sleep_(0.25)
-    print("██║╚██╔╝██║██╔══╝  ██║╚██╔╝██║██║   ██║██╔══██╗  ╚██╔╝      ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ")
-    sleep_(0.25)
-    print("██║ ╚═╝ ██║███████╗██║ ╚═╝ ██║╚██████╔╝██║  ██║   ██║       ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗")
-    sleep_(0.25)
-    print("╚═╝     ╚═╝╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝        ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝")
-    print("################################################################################################")
+    intro_text = [
+        "################################################################################################",
+        "███╗   ███╗███████╗███╗   ███╗ ██████╗ ██████╗ ██╗   ██╗     ██████╗  █████╗ ███╗   ███╗███████╗",
+        "████╗ ████║██╔════╝████╗ ████║██╔═══██╗██╔══██╗╚██╗ ██╔╝    ██╔════╝ ██╔══██╗████╗ ████║██╔════╝",
+        "██╔████╔██║█████╗  ██╔████╔██║██║   ██║██████╔╝ ╚████╔╝     ██║  ███╗███████║██╔████╔██║█████╗  ",
+        "██║╚██╔╝██║██╔══╝  ██║╚██╔╝██║██║   ██║██╔══██╗  ╚██╔╝      ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ",
+        "██║ ╚═╝ ██║███████╗██║ ╚═╝ ██║╚██████╔╝██║  ██║   ██║       ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗",
+        "╚═╝     ╚═╝╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝        ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝",
+        "################################################################################################"
+    ]
+    for line in intro_text:
+        print(line)
+        sleep_(0.25)
     sleep_(0.5)
-    return None
 
-"""The next two functions specify the gamemode during the programme"""
-def letters_mode(difficulty :str) -> None:
+# Handles the game mode selection and starts the game
+def select_difficulty(game_mode: str) -> None:
+    while True:
+        choice = input(f"\nEnter 1 for easy, 2 for medium, or 3 for high difficulty: ").strip()
+        if choice in ["1", "2", "3"]:
+            game_mode(difficulty=choice)
+            return
+        print("Invalid value, try again.")
+
+# Starts the letters mode game
+def letters_mode(difficulty: str) -> None:
     actual_game(difficulty=int(difficulty), game_mode="letters")
-    return None
 
-def numbers_mode(difficulty :str) -> None:
+# Starts the numbers mode game
+def numbers_mode(difficulty: str) -> None:
     actual_game(difficulty=int(difficulty), game_mode="numbers")
-    return None
 
-"""in this function the actual game is executed"""
-def actual_game(difficulty :int, game_mode :str) -> None:
-    """Now we can use the functions created at the start of the script"""
-    global sequence
-    global new_record
-    global points
-    global clear
-    global sleep_
+# The main game logic
+def actual_game(difficulty: int, game_mode: str) -> None:
+    global sequence, new_record, points, start
 
-    """main loop"""
     while True:
         clear()
 
-        """With this if we handle the different gamemodes and difficultys selected """
-        if game_mode == "numbers":
-            sequence += rm.choice(NUMBERS[difficulty-1])
-        else:
-            sequence += rm.choice(LETTERS[difficulty-1])
+        # Generate the sequence based on the difficulty and game mode
+        sequence += rm.choice(LETTERS[difficulty - 1] if game_mode == "letters" else NUMBERS[difficulty - 1])
 
-        """With this we print the characters"""
+        # Display the sequence
         for item in sequence:
-            print(f"Current: {str(item)}")
+            print(f"Current: {item}")
             sleep_(1)
             clear()
             sleep_(0.2)
 
-        """We check if the answer is correct"""
-        if input("Write the sequence you have seen, if you get it wrong or type everything except the correct sequence you will lose and exit!: ").lower().strip() != sequence:
+        # Check if the input matches the sequence
+        if input("Write the sequence you have seen, or type anything else to lose: ").lower().strip() != sequence:
             clear()
-
-            """calculation of game time"""
-            end = tm.perf_counter()
-            game_time = end - start
-            
-            print(f"Game Over, your score is: {str(points)}")
-            print(f"you played for {str(game_time)} second")
+            game_time = tm.perf_counter() - start
+            print(f"Game Over, your score is: {points}")
+            print(f"You played for {game_time:.2f} seconds.")
             if points > current_record:
-                print(f"Your record has been increased to your new score: {str(points)}")
+                print(f"New record! Your score: {points}")
                 file_handling(points)
             else:
-                print(f"Your score of {str(points)} points is lower than or equal to your record of {str(current_record)} points, so the record hasn't been changed!")
+                print(f"Your score of {points} is not higher than the record ({current_record}).")
             break
+
+        # If the answer is correct, increment points
         print("Correct answer")
         points += 1
-        continue
-    return None
 
-"""the main function contains the calls of all the other functions"""
+# Main function where everything starts
 def main() -> None:
     opening_screen()
     while True:
-        game_mode :str = input("\nSelect game mode (letters, numbers or q to quit!): ").lower().strip()
+        game_mode = input("\nSelect game mode (letters, numbers, or q to quit): ").lower().strip()
         if game_mode == "q":
-            return None
+            return
         elif game_mode == "letters":
-            while True:
-                choice = input("\nEnter 1 for easy, 2 for medium or 3 for high difficulty!: ").strip()
-                if not(choice != "1" and choice != "2" and choice != "3"):
-                    letters_mode(difficulty=choice)
-                    return None
-                print("Invalid value, try again")
-                continue
+            select_difficulty(letters_mode)
         elif game_mode == "numbers":
-            while True:
-                choice = input("\nEnter 1 for easy, 2 for medium or 3 for high difficulty!: ").strip()
-                if not (choice != "1" and choice != "2" and choice != "3"):
-                    numbers_mode(difficulty=choice)
-                    return None
-                print("Invalid value, try again")
-                continue
-        print("Invalid value, try again")
-        continue
+            select_difficulty(numbers_mode)
+        else:
+            print("Invalid value, try again.")
 
-#Start of the program
+# Start the program
 if __name__ == "__main__":
     main()
